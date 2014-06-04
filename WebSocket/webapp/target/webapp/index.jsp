@@ -42,6 +42,10 @@ document.getElementById("msg").value = "";
 function closeConnect(){
 ws.close();
 }
+function clearChat()
+{
+	document.getElementById("chatlog").textContent="";
+}
 </script>
  </head>
 
@@ -49,6 +53,7 @@ ws.close();
  <textarea id="chatlog" readonly></textarea><br/>
 <input id="msg" type="text" />
 <button type="submit" id="sendButton" onClick="postToServer()">Send!</button>
+<button type="button" id="clear" onClick="clearChat()">clear</button>
 <button type="submit" id="sendButton" onClick="closeConnect()">End</button>
  </body>
 </html>

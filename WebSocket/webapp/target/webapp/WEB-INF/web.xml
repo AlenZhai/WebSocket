@@ -7,4 +7,21 @@
  <listener>
        <listener-class>com.websocket.init.SystemInit</listener-class>       
     </listener>
+    <servlet>
+    <servlet-name>clients</servlet-name>
+    <servlet-class>com.websocket.servlet.GetClients</servlet-class>
+    <init-param>
+    <param-name>encoding</param-name>
+    <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+    <param-name>clients</param-name>
+    <!-- class path is the root dir -->
+    <param-value>/clients.properties</param-value>
+    </init-param>
+    </servlet>
+    <servlet-mapping>
+    <servlet-name>clients</servlet-name>
+    <url-pattern>/web/clients</url-pattern>
+    </servlet-mapping>
 </web-app>

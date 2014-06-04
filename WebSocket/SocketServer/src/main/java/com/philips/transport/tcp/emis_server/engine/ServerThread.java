@@ -38,6 +38,8 @@ public class ServerThread extends Thread {
 		this.clientIp=this.socket.getInetAddress().getHostAddress();
 		this.clientQueue=ECacheManager.getNewInstance().getQueue(this.clientIp);
 		logger.debug("client:"+clientNo+" client IP is:"+this.clientIp);
+		ECacheManager.getNewInstance().addClient(clientIp);
+		logger.debug("clients:"+ECacheManager.getNewInstance().getClients());
 		this.start();
 	}
 	/**
@@ -80,7 +82,8 @@ public class ServerThread extends Thread {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("Error:",e);
 		}finally{
 			if(this.socket!=null)
 			{
@@ -88,6 +91,7 @@ public class ServerThread extends Thread {
 					this.socket.close();
 					logger.debug("close and relace client:"+this.clientNo);
 					ServerEngine.relace(clientNo+"");
+					ECacheManager.getNewInstance().removeClient(clientIp);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -106,19 +110,28 @@ public class ServerThread extends Thread {
 	private void parse(Integer[] dataArray)
 	{		 
 			 int channel=dataArray[1].intValue();
+			 DataPackFormat data=null;
 			 switch(channel)
 			 {
 			 case 0x10:
-				 this.clientQueue.offer(DataParse.parseEGC(dataArray));
+				 data= DataParse.parseEGC(dataArray);
+				 data.setClinetIp(this.clientIp);
+				 this.clientQueue.offer(data);
 				 break;
 			 case 0x20:
-				 this.clientQueue.offer(DataParse.parseNIBP(dataArray));
+				  data= DataParse.parseNIBP(dataArray);
+				  data.setClinetIp(this.clientIp);
+				 this.clientQueue.offer(data);
 				 break;
 			 case 0x30:
-				 this.clientQueue.offer(DataParse.parseSPO2(dataArray));
+				  data= DataParse.parseSPO2(dataArray);
+				  data.setClinetIp(this.clientIp);
+				 this.clientQueue.offer(data);
 				 break;
 			 case 0x40:
-				 this.clientQueue.offer(DataParse.parseRESP(dataArray));
+				  data= DataParse.parseRESP(dataArray);
+				  data.setClinetIp(this.clientIp);
+				 this.clientQueue.offer(data);
 				 break;
 			 }
 		 }

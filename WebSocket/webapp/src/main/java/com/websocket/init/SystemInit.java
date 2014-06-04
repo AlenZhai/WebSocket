@@ -12,16 +12,22 @@ import org.slf4j.LoggerFactory;
 import com.philips.transport.tcp.emis_server.engine.ServerEngine;
 import com.philips.transport.tcp.emis_server.pack_type.DataPackFormat;
 import com.philips.transport.tcp.emis_server.utils.ECacheManager;
+import com.websocket.handler.DataHandle;
 
 public class SystemInit implements ServletContextListener {
 	private static final Logger logger = LoggerFactory
-			.getLogger(SystemInit.class);
-
+			.getLogger(SystemInit.class);    
+    private DataHandle handle;
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		// TODO Auto-generated method stub
 		try {
 			ServerEngine.stop();
+			if(handle!=null)
+			{
+			  handle.setStop(true);
+			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -32,14 +38,10 @@ public class SystemInit implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent arg0) {
 		// TODO Auto-generated method stub
 		ServerEngine.init();
-		new SocketServer().start();
-		Queue<DataPackFormat> queue = ECacheManager.getNewInstance().getQueue("127.0.0.1");
-
-		queue.offer(new DataPackFormat());
-		queue.offer(new DataPackFormat());
-		queue.offer(new DataPackFormat());
-		queue.offer(new DataPackFormat());
-	}
+		new SocketServer().start();			
+		handle=new DataHandle();
+		handle.start();
+   	}
 
 	private static class SocketServer extends Thread {
 		public void run() {

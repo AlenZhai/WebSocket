@@ -1,13 +1,17 @@
 package com.philips.transport.tcp.emis_server.utils;
 
-import java.util.HashMap;
+
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 
 
 
 
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +27,10 @@ import com.philips.transport.tcp.emis_server.pack_type.DataPackFormat;
  */
 public class ECacheManager {
 	private static final Logger logger = LoggerFactory.getLogger(ECacheManager.class);
-	private static Map<String,Queue<DataPackFormat>> queueMap=new HashMap<String,Queue<DataPackFormat>>();
-	public static Map<String, Queue<DataPackFormat>> getQueueMap() {
-		return queueMap;
-	}
-	private static ECacheManager cacheMgr;
+	private ConcurrentMap<String,Queue<DataPackFormat>> queueMap=new ConcurrentHashMap<String,Queue<DataPackFormat>>();
+	//private Queue<DataPackFormat> queue=new LinkedList<DataPackFormat>();
+	private Set<String> clients=new CopyOnWriteArraySet<String>();
+	private static  ECacheManager cacheMgr;
 	private ECacheManager()
 	{
 		logger.debug("init cache .....");
@@ -53,14 +56,14 @@ public class ECacheManager {
 		if(queueMap.containsKey(key))
 		{
 			return queueMap.get(key);
-		}else if(!queueMap.containsKey(key))
-		{
-			Queue<DataPackFormat> q=new LinkedList<DataPackFormat>();
-			queueMap.put(key, q);
-			return q;
 		}
-		return null;
-		
+		Queue<DataPackFormat> q=new LinkedList<DataPackFormat>();
+		queueMap.put(key, q);
+		return q;		
+	}
+	public ConcurrentMap<String,Queue<DataPackFormat>> getQueueMap()
+	{
+		return queueMap;
 	}
 	/**
 	 * 从队列头取出一个元素并移除该元素
@@ -68,11 +71,9 @@ public class ECacheManager {
 	 */
 	public synchronized  DataPackFormat outQueue(String key)
 	{
-		if(queueMap!=null&&queueMap.containsKey(key))
-		{
-			return queueMap.get(key).poll();
-		}
-		return null;
+		
+	return queueMap.get(key).poll();
+		
 	}
 	/**
 	 * 在队列的尾加入一个元素
@@ -80,21 +81,7 @@ public class ECacheManager {
 	 */
 	public synchronized void inQueue(String key,DataPackFormat json)
 	{
-		if(queueMap!=null&&queueMap.containsKey(key))
-		{
-			queueMap.get(key).offer(json);
-		}else if(queueMap==null)
-		{
-			queueMap=new HashMap<String,Queue<DataPackFormat>>();
-			Queue<DataPackFormat> q=new LinkedList<DataPackFormat>();
-			q.offer(json);
-			queueMap.put(key, q);
-		}else if(!queueMap.containsKey(key)){
-			Queue<DataPackFormat> q=new LinkedList<DataPackFormat>();
-			q.offer(json);
-			queueMap.put(key, q);
-		}
-		
+		queueMap.get(key).offer(json);		
 	}
 	/**
 	 * 从队列头取出一个元素但不移除该元素
@@ -103,6 +90,17 @@ public class ECacheManager {
 	public  DataPackFormat peek(String key)
 	{
 		return queueMap.get(key).peek();
+	}
+	public Set<String> getClients() {
+		return clients;
+	}
+	public void addClient(String ip)
+	{
+		clients.add(ip);
+	}
+	public void removeClient(String ip)
+	{
+		clients.remove(ip);
 	}
 
 }

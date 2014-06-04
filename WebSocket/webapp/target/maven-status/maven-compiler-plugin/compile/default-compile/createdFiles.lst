@@ -1,5 +1,7 @@
-com\websocket\init\SystemInit$SocketServer.class
-com\websocket\servlet\SocketServlet.class
+com\websocket\util\ConnectionsManager.class
 com\websocket\init\SystemInit.class
 com\websocket\init\SystemInit$1.class
 com\websocket\handler\DataHandle.class
+com\websocket\init\SystemInit$SocketServer.class
+com\websocket\servlet\SocketServlet.class
+com\websocket\servlet\GetClients.class
