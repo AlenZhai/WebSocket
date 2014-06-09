@@ -54,7 +54,7 @@ public class SocketServlet {
 	public void incoming(String message) {
 		
 		Set<String> keys = ECacheManager.getNewInstance().getClients();
-		logger.debug("Conns:"+ConnectionsManager.getNewInstance().getConnections());
+		//logger.debug("Conns:"+ConnectionsManager.getNewInstance().getConnections());
 		logger.debug("clients:"+keys);
 		//logger.debug("queue:"+ECacheManager.getQueueMap());
 		if (keys.contains(message)) {

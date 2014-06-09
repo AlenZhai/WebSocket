@@ -33,9 +33,7 @@ public class NIBP_SingleFormat extends DataPackFormat implements DataParser {
 		this.weanPrse=data[6];		//解析xx4
 		int tempH=data[7];			//解析xx5
 		int tempL=data[8];			//解析xx6
-		this.todyTemp=Integer.valueOf(					
-				Integer.toBinaryString(tempH)+Integer.toBinaryString(tempL),
-				2);
+		this.todyTemp=tempH+tempL/10f;
 		this.respRate=data[9];		//解析xx7
 		this.version=data[11];		//解析xx9
 		int other=data[12];			//解析xx10
@@ -45,9 +43,7 @@ public class NIBP_SingleFormat extends DataPackFormat implements DataParser {
 		}
 		int tempH2=data[13];			//解析xx11
 		int tempL2=data[14];			//解析xx12
-		this.todyTemp2=Integer.valueOf(						
-				Integer.toBinaryString(tempH2)+Integer.toBinaryString(tempL2),
-				2);
+		this.todyTemp2=tempH2+tempL2/10f;
 		return this;
 	}
 	public float getPulseRate() {
